@@ -14,10 +14,12 @@ def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         current_user = get_jwt_identity()
+        print(f'c_user:{current_user}')
         db = SessionLocalExemplo()
         try:
-            sql = select(UsuarioExemplo).where(UsuarioExemplo.id == current_user)
+            sql = select(UsuarioExemplo).where(UsuarioExemplo.email == current_user)
             user = db.execute(sql).scalar()
+            print(f'teste admin: {user and user.papel == "admin"} {user.papel}')
             if user and user.papel == "admin":
                 return fn(*args, **kwargs)
             return jsonify(msg="Acesso negado: Requer privilégios de administrador"), 403
@@ -25,9 +27,7 @@ def admin_required(fn):
             db.close()
     return wrapper
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    return (f"<h1>Olá mundo</h1>Projeto Exemplo da API com <strong>Token</strong>")
+
 @app.route('/login', methods=['POST'])
 def login():
     dados = request.get_json()
@@ -98,7 +98,7 @@ def lista_pessoa():
         banco.close()
 
 @app.route('/notas_exemplo', methods=['POST'])
-#@jwt_required()
+@jwt_required()
 @admin_required # Somente admin pode criar notas neste exemplo
 def criar_nota_exemplo():
     data = request.get_json()
