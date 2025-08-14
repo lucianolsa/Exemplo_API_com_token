@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "super_senha"
 jwt = JWTManager(app)
 
+
 def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
