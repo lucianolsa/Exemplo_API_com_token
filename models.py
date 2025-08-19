@@ -25,7 +25,8 @@ class UsuarioExemplo(Base):
         dados={
             'id': self.id,
             'nome': self.nome,
-            'email': self.email
+            'email': self.email,
+            'papel': self.papel,
         }
         return dados
 
