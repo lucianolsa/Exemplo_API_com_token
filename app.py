@@ -55,8 +55,10 @@ def login():
     finally:
         db.close()
 
-@app.route('/cadastro', methods=['POST'])
-def cadastro():
+@app.route('/usuarios', methods=['POST'])
+@jwt_required()
+@admin_required
+def cadastro_usuarios():
     dados = request.get_json()
     nome = dados['nome']
     email = dados['email']
@@ -88,7 +90,7 @@ def cadastro():
     finally:
         banco.close()
 
-@app.route('/lista_pessoas', methods=['GET'])
+@app.route('/usuarios', methods=['GET'])
 @jwt_required()
 def lista_pessoa():
     banco = SessionLocalExemplo()
