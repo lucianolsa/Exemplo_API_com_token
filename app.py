@@ -4,12 +4,9 @@ from models import UsuarioExemplo, NotasExemplo, SessionLocalExemplo
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
 from functools import wraps
 
-
-
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "super_senha"
 jwt = JWTManager(app)
-
 
 def admin_required(fn):
     @wraps(fn)
@@ -28,32 +25,8 @@ def admin_required(fn):
             db.close()
     return wrapper
 
+#Rota de login
 
-@app.route('/login', methods=['POST'])
-def login():
-    dados = request.get_json()
-    email = dados['email']
-    senha = dados['senha']
-
-    db = SessionLocalExemplo()
-
-    try:
-        sql = select(UsuarioExemplo).where(UsuarioExemplo.email == email)
-        user = db.execute(sql).scalar()
-
-        if user and user.check_password(senha):
-            print("if login")
-            access_token = create_access_token(identity=str(user.email))
-            return jsonify({
-                "access_token":access_token,
-                "papel": user.papel,
-            }), 200
-        return jsonify({"msg": "Credenciais inválidas"}), 401
-    except Exception as e:
-        print(e)
-        return jsonify({"msg": str(e)}), 500
-    finally:
-        db.close()
 
 @app.route('/usuarios', methods=['POST'])
 @jwt_required()
